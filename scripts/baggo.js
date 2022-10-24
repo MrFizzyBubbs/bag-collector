@@ -5288,10 +5288,10 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
+  "adventures": () => (/* binding */ adventures),
   "args": () => (/* binding */ args),
-  "initialAdvs": () => (/* binding */ initialAdvs),
-  "initialTurncount": () => (/* binding */ initialTurncount),
   "main": () => (/* binding */ main),
+  "turncount": () => (/* binding */ turncount),
   "turnsRemaining": () => (/* binding */ turnsRemaining)
 });
 
@@ -11599,8 +11599,8 @@ function acquire(quantity, item, maxPrice) {
   return (0,external_kolmafia_namespaceObject.itemAmount)(item) - startAmount;
 }
 function expectedAdvsGainedPerCombat() {
-  var gnome = haveEquipped($item(lib_templateObject || (lib_templateObject = lib_taggedTemplateLiteral(["gnomish housemaid's kgnee"])))) ? familiarWeight(myFamiliar()) + weightAdjustment() : 0;
-  var ring = haveEquipped($item(lib_templateObject2 || (lib_templateObject2 = lib_taggedTemplateLiteral(["mafia thumb ring"])))) ? 0.04 : 0;
+  var gnome = (0,external_kolmafia_namespaceObject.haveEquipped)(template_string_$item(lib_templateObject || (lib_templateObject = lib_taggedTemplateLiteral(["gnomish housemaid's kgnee"])))) ? ((0,external_kolmafia_namespaceObject.familiarWeight)((0,external_kolmafia_namespaceObject.myFamiliar)()) + (0,external_kolmafia_namespaceObject.weightAdjustment)()) / 1000 : 0;
+  var ring = (0,external_kolmafia_namespaceObject.haveEquipped)(template_string_$item(lib_templateObject2 || (lib_templateObject2 = lib_taggedTemplateLiteral(["mafia thumb ring"])))) ? 0.04 : 0;
   return gnome + ring;
 }
 function expectedBagsPerAdv(familiarWeight, itemDrop) {
@@ -12048,7 +12048,7 @@ var Potion = /*#__PURE__*/function () {
   return Potion;
 }();
 function getRelevantPotions() {
-  return external_kolmafia_namespaceObject.Item.all().filter(item => item.tradeable && !blacklist.includes(item) && (0,external_kolmafia_namespaceObject.itemType)(item) === "potion").map(item => new Potion(item)).filter(potion => potion.familiarWeight() > 0 || potion.itemDrop() > 0).filter(potion => potion.netValue() > 0).sort((a, b) => b.netValue() - a.netValue());
+  return external_kolmafia_namespaceObject.Item.all().filter(item => item.tradeable && !blacklist.includes(item) && (0,external_kolmafia_namespaceObject.itemType)(item) === "potion").map(item => new Potion(item)).filter(potion => (potion.familiarWeight() > 0 || potion.itemDrop() > 0) && potion.netValue() > 0).sort((a, b) => b.netValue() - a.netValue());
 }
 function setupPotions() {
   var excludedEffects = new Set(getActiveEffects().map(effect => getMutuallyExclusiveEffectsOf(effect)).flat());
@@ -12607,7 +12607,7 @@ var BaggoQuest = {
   }, {
     name: "Collect Bags",
     after: ["Dailies/Kgnee", "Party Fair"],
-    completed: () => turnsRemaining() <= 0,
+    completed: () => turnsRemaining() < 1 || (0,external_kolmafia_namespaceObject.myAdventures)() === 0,
     prepare: () => {
       bubbleVision();
 
@@ -13133,8 +13133,8 @@ function main_taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.sl
 
 var args = Args.create("baggo", "A script for farming duffel bags and van keys.", {
   advs: Args.number({
-    help: "Number of adventures to spend farming. A value of -1 will spend all of your adventures, including those generated.",
-    default: -1
+    help: "Number of adventures to run (use negative numbers for the number of adventures remaining).",
+    default: Infinity
   }),
   itemvalue: Args.number({
     help: "Value of a single duffel bag or van key.",
@@ -13154,11 +13154,16 @@ var args = Args.create("baggo", "A script for farming duffel bags and van keys."
     default: ""
   })
 });
-var initialAdvs = (0,external_kolmafia_namespaceObject.myAdventures)();
-var initialTurncount = (0,external_kolmafia_namespaceObject.myTurncount)();
+var adventures = (0,external_kolmafia_namespaceObject.myAdventures)();
+var turncount = (0,external_kolmafia_namespaceObject.myTurncount)();
 function turnsRemaining() {
-  if (args.advs === -1) return (0,external_kolmafia_namespaceObject.myAdventures)();
-  return args.advs - ((0,external_kolmafia_namespaceObject.myTurncount)() - initialTurncount);
+  if (isFinite(args.advs) && args.advs > 0) {
+    var spent = (0,external_kolmafia_namespaceObject.myTurncount)() - turncount;
+    return Math.min(args.advs - spent, (0,external_kolmafia_namespaceObject.myAdventures)());
+  }
+
+  var spend = (0,external_kolmafia_namespaceObject.myAdventures)() + Math.min(0, args.advs);
+  return Math.round(spend / (1 - expectedAdvsGainedPerCombat()));
 }
 function main(command) {
   var _sessionResults$items, _sessionResults$items2;
@@ -13188,8 +13193,8 @@ function main(command) {
   var sessionResults = Session.current().diff(sessionStart);
   var bags = (_sessionResults$items = sessionResults.items.get(template_string_$item(main_templateObject || (main_templateObject = main_taggedTemplateLiteral(["unremarkable duffel bag"]))))) !== null && _sessionResults$items !== void 0 ? _sessionResults$items : 0;
   var keys = (_sessionResults$items2 = sessionResults.items.get(template_string_$item(main_templateObject2 || (main_templateObject2 = main_taggedTemplateLiteral(["van key"]))))) !== null && _sessionResults$items2 !== void 0 ? _sessionResults$items2 : 0;
-  var advs = initialAdvs - (0,external_kolmafia_namespaceObject.myAdventures)();
-  var turns = (0,external_kolmafia_namespaceObject.myTurncount)() - initialTurncount;
+  var advs = adventures - (0,external_kolmafia_namespaceObject.myAdventures)();
+  var turns = (0,external_kolmafia_namespaceObject.myTurncount)() - turncount;
   var mpa = Math.round(((bags + keys) * args.itemvalue + sessionResults.meat) / advs);
   (0,external_kolmafia_namespaceObject.print)("This run of baggo, you spent ".concat(turns, " turns and generated:"), "blue");
   (0,external_kolmafia_namespaceObject.print)("* ".concat(formatNumber(bags), " duffel bags"), "blue");
