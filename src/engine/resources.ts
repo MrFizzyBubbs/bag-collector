@@ -1,6 +1,19 @@
 import { CombatResource as BaseCombatResource, OutfitSpec } from "grimoire-kolmafia";
-import { Familiar, Item, Monster, myTurncount, retrieveItem, retrievePrice, Skill } from "kolmafia";
-import { $item, $skill, AsdonMartin, get, getBanishedMonsters, have } from "libram";
+import {
+  canEquip,
+  Familiar,
+  Item,
+  itemType,
+  Monster,
+  myFury,
+  myTurncount,
+  retrieveItem,
+  retrievePrice,
+  Skill,
+  useSkill,
+  weaponHands,
+} from "kolmafia";
+import { $effect, $item, $skill, AsdonMartin, get, getBanishedMonsters, have } from "libram";
 import { debug } from "../lib";
 
 export interface Resource {
@@ -17,11 +30,36 @@ export interface BanishSource extends CombatResource {
   do: Item | Skill;
 }
 
+const availableClub: Item =
+  Item.all().find(
+    (i) =>
+      have(i) &&
+      canEquip(i) &&
+      weaponHands(i) === 2 &&
+      (itemType(i) === "club" || (have($skill`Iron Palm Technique`) && itemType(i) === "sword"))
+  ) ?? $item`amok putter`;
+
 export const banishSources: BanishSource[] = [
   {
     name: "System Sweep",
     available: () => have($skill`System Sweep`),
     do: $skill`System Sweep`,
+  },
+  {
+    name: "Batter Up!",
+    available: () => have($skill`Batter Up!`) && myFury() >= 5,
+    prepare: (): void => {
+      if (
+        have($skill`Iron Palm Technique`) &&
+        !have($effect`Iron Palms`) &&
+        itemType(availableClub) === "sword"
+      ) {
+        useSkill($skill`Iron Palm Technique`);
+      }
+      retrieveItem(availableClub);
+    },
+    equip: availableClub,
+    do: $skill`Batter Up!`,
   },
   {
     name: "Human Musk",
