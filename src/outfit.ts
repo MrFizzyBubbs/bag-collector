@@ -2,6 +2,7 @@ import { Outfit } from "grimoire-kolmafia";
 import {
   Familiar,
   inebrietyLimit,
+  Item,
   myClass,
   myFamiliar,
   myInebriety,
@@ -23,6 +24,7 @@ import {
 import { gyou, maxBy } from "./lib";
 import { args } from "./main";
 import { Calculator } from "./calculator";
+import { freeRun, freeRunChosen } from "./tasks/baggo";
 
 export function isSober(): boolean {
   return myInebriety() <= inebrietyLimit() - Number(myFamiliar() === $familiar`Stooper`);
@@ -66,7 +68,9 @@ export function chooseOutfit(): Outfit {
     outfit.equipFirst($items`mime army infiltration glove, tiny black hole`);
   }
 
-  outfit.equipFirst($items`Greatest American Pants, navel ring of navel gazing`);
+  if (!args.freerun || (freeRunChosen && freeRun.item === Item.none)) {
+    outfit.equipFirst($items`Greatest American Pants, navel ring of navel gazing`);
+  }
 
   if (!have($effect`Everything Looks Yellow`) || gyou()) {
     outfit.equip($item`Jurassic Parka`);

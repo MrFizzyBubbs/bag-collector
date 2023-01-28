@@ -5,18 +5,22 @@ import {
   canInteract,
   expectedColdMedicineCabinet,
   getWorkshed,
+  Item,
   itemAmount,
   Location,
+  mallPrice,
   Monster,
   myAdventures,
   myClass,
   myLocation,
   myMaxhp,
   myThrall,
+  print,
   putCloset,
   restoreHp,
   runChoice,
   toEffect,
+  toInt,
   totalTurnsPlayed,
   toUrl,
   useSkill,
@@ -35,6 +39,7 @@ import {
   have,
   Macro,
 } from "libram";
+import { Calculator } from "../calculator";
 import { CombatStrategy } from "../engine/combat";
 import { Quest } from "../engine/task";
 import { gyou } from "../lib";
@@ -49,6 +54,13 @@ const floristFlowers = [
 ];
 
 let potionsCompleted = false;
+
+export let freeRunChosen = false;
+export let freeRun: { item: Item; success: number; price: number } = {
+  item: Item.none,
+  success: 0,
+  price: 0,
+};
 
 export function BaggoQuest(): Quest {
   return {
@@ -141,6 +153,33 @@ export function BaggoQuest(): Quest {
         limit: { tries: 1 },
       },
       {
+        name: "Choose Free Run",
+        completed: () => !args.freerun || freeRunChosen,
+        do: () => {
+          freeRun =
+            [
+              { item: $item`tattered scrap of paper`, success: 0.5 },
+              { item: $item`green smoke bomb`, success: 0.9 },
+              { item: $item`GOTO`, success: 0.3 },
+            ]
+              .map(({ item, success }) => ({
+                item,
+                success,
+                price:
+                  Calculator.current().bagsGainedPerAdv() * args.bagvalue -
+                  mallPrice(item) / success, // Break-even price
+              }))
+              .sort((a, b) => b.price - a.price)
+              .find(({ item, success, price }) => price > 0) ?? freeRun;
+          print(`Chosen free run: ${freeRun.item} @ a break-even price of ${freeRun.price} meat`);
+        },
+        post: () => {
+          freeRunChosen = true;
+        },
+        outfit: chooseOutfit,
+        limit: { tries: 1 },
+      },
+      {
         name: "Collect Bags",
         after: ["Dailies/Kgnee", "Potions", "Party Fair"],
         completed: () => turnsRemaining() <= 0 || args.buff,
@@ -162,22 +201,40 @@ export function BaggoQuest(): Quest {
         ]
           .filter((skill) => have(skill))
           .map((skill) => toEffect(skill)),
+        acquire: () => {
+          return args.freerun && freeRun.item !== Item.none
+            ? [
+                {
+                  item: freeRun.item,
+                  num: Math.ceil(Math.log(1 / (1 - 0.999)) / Math.log(1 / (1 - freeRun.success))), // Acquire enough to guaratee success >= 99.9% of the time
+                },
+              ]
+            : [];
+        },
         choices: { 1324: 5 },
         combat: new CombatStrategy()
           .banish($monsters`biker, party girl, "plain" girl`)
           .autoattack(
-            Macro.externalIf(
-              !gyou(),
-              Macro.if_(`!hppercentbelow 75`, Macro.step("pickpocket")),
-              Macro.step("pickpocket")
-            )
-              .if_(`match "unremarkable duffel bag" || match "van key"`, Macro.runaway()) // TODO only runaway if we have a navel runaway, consider tatters/GOTOs
-              .trySkill($skill`Spit jurassic acid`)
-              .trySkill($skill`Summon Love Gnats`)
-              .if_(
-                "!hppercentbelow 75 && !mpbelow 40",
-                Macro.trySkill($skill`Double Nanovision`).trySkill($skill`Double Nanovision`)
-              ),
+            () =>
+              Macro.externalIf(
+                !gyou(),
+                Macro.if_(`!hppercentbelow 75`, Macro.step("pickpocket")),
+                Macro.step("pickpocket")
+              )
+                .if_(
+                  `match "unremarkable duffel bag" || match "van key"`,
+                  Macro.externalIf(
+                    args.freerun && freeRun.item !== Item.none,
+                    Macro.while_(`hascombatitem ${toInt(freeRun.item)}`, Macro.item(freeRun.item)),
+                    Macro.runaway() // TODO only runaway if we have a navel runaway
+                  )
+                )
+                .trySkill($skill`Spit jurassic acid`)
+                .trySkill($skill`Summon Love Gnats`)
+                .if_(
+                  "!hppercentbelow 75 && !mpbelow 40",
+                  Macro.trySkill($skill`Double Nanovision`).trySkill($skill`Double Nanovision`)
+                ),
             $monsters`burnout, jock`
           )
           .autoattack((): Macro => {

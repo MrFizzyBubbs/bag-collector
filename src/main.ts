@@ -22,6 +22,10 @@ export const args = Args.create("baggo", "A script for farming duffel bags and v
     ],
     default: "none",
   }),
+  freerun: Args.flag({
+    help: "Use free runaway items after a successful pickpocket if economical.",
+    default: false,
+  }),
   buff: Args.flag({
     help: "Only do setup and buffing, do not adventure.",
     default: false,
