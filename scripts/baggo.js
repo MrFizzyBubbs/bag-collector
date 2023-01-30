@@ -12095,8 +12095,6 @@ function engine_isNativeReflectConstruct() { if (typeof Reflect === "undefined" 
 
 function engine_getPrototypeOf(o) { engine_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return engine_getPrototypeOf(o); }
 
-function engine_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -12109,17 +12107,11 @@ var engine_Engine = /*#__PURE__*/function (_BaseEngine) {
   var _super = engine_createSuper(Engine);
 
   function Engine(tasks) {
-    var _this;
-
     engine_engine_classCallCheck(this, Engine);
 
-    _this = _super.call(this, tasks, {
+    return _super.call(this, tasks, {
       combat_defaults: new MyActionDefaults()
     });
-
-    engine_defineProperty(engine_assertThisInitialized(_this), "cachedCss", "");
-
-    return _this;
   }
 
   engine_engine_createClass(Engine, [{
