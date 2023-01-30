@@ -12103,7 +12103,6 @@ function engine_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
-var engine_grimoireCCS = "grimoire_macro";
 var engine_Engine = /*#__PURE__*/function (_BaseEngine) {
   engine_inherits(Engine, _BaseEngine);
 
@@ -12139,31 +12138,6 @@ var engine_Engine = /*#__PURE__*/function (_BaseEngine) {
       }
     }
   }, {
-    key: "setCombat",
-    value: function setCombat(task, task_combat, task_resources) {
-      var _this$options;
-
-      // Save regular combat macro
-      var macro = task_combat.compile(task_resources, (_this$options = this.options) === null || _this$options === void 0 ? void 0 : _this$options.combat_defaults, task.do instanceof external_kolmafia_namespaceObject.Location ? task.do : undefined);
-
-      if (macro.toString() !== this.cachedCss) {
-        // Use the macro through a CCS file
-        this.cachedCss = macro.toString();
-        (0,external_kolmafia_namespaceObject.writeCcs)("[ default ]\n\"".concat(macro.toString(), "\""), engine_grimoireCCS);
-        (0,external_kolmafia_namespaceObject.cliExecute)("ccs ".concat(engine_grimoireCCS)); // force Mafia to reparse the ccs
-      } // Save autoattack combat macro
-
-
-      var autoattack = task_combat.compileAutoattack().step(macro);
-
-      if (autoattack.toString().length > 1) {
-        autoattack.save();
-        autoattack.setAutoAttack();
-      } else {
-        (0,external_kolmafia_namespaceObject.setAutoAttack)(0);
-      }
-    }
-  }, {
     key: "customize",
     value: function customize(task, outfit, combat, resources) {
       // Set up a banish if needed
@@ -12186,53 +12160,6 @@ var engine_Engine = /*#__PURE__*/function (_BaseEngine) {
       } finally {
         _iterator.f();
       }
-    }
-  }, {
-    key: "initPropertiesManager",
-    value: function initPropertiesManager(manager) {
-      // Properties adapted from garbo
-      manager.set({
-        logPreferenceChange: true,
-        logPreferenceChangeFilter: engine_engine_toConsumableArray(new Set([].concat(engine_engine_toConsumableArray(property_get("logPreferenceChangeFilter").split(",")), ["libram_savedMacro", "maximizerMRUList", "testudinalTeachings", "_lastCombatStarted"]))).sort().filter(a => a).join(","),
-        battleAction: "custom combat script",
-        autoSatisfyWithMall: true,
-        autoSatisfyWithNPCs: true,
-        autoSatisfyWithCoinmasters: true,
-        autoSatisfyWithStash: false,
-        dontStopForCounters: true,
-        maximizerFoldables: true,
-        afterAdventureScript: "",
-        betweenBattleScript: "",
-        choiceAdventureScript: "",
-        familiarScript: "",
-        currentMood: "apathetic",
-        autoTuxedo: true,
-        autoPinkyRing: true,
-        autoGarish: true,
-        allowNonMoodBurning: false,
-        allowSummonBurning: true,
-        libramSkillsSoftcore: "none"
-      });
-
-      if (this.options.ccs !== "") {
-        var _this$options$ccs;
-
-        if (this.options.ccs === undefined && (0,external_kolmafia_namespaceObject.readCcs)(engine_grimoireCCS) === "") {
-          // Write a simple CCS so we can switch to it
-          (0,external_kolmafia_namespaceObject.writeCcs)("[ default ]\nabort", engine_grimoireCCS);
-        }
-
-        manager.set({
-          customCombatScript: (_this$options$ccs = this.options.ccs) !== null && _this$options$ccs !== void 0 ? _this$options$ccs : engine_grimoireCCS
-        });
-      }
-    }
-  }, {
-    key: "destruct",
-    value: function destruct() {
-      engine_get(engine_getPrototypeOf(Engine.prototype), "destruct", this).call(this);
-
-      (0,external_kolmafia_namespaceObject.setAutoAttack)(0);
     }
   }]);
 
