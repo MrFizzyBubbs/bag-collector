@@ -35,9 +35,9 @@ const availableClub: Item =
     (i) =>
       have(i) &&
       canEquip(i) &&
-      weaponHands(i) === 2 &&
+      weaponHands(i) === 1 &&
       (itemType(i) === "club" || (have($skill`Iron Palm Technique`) && itemType(i) === "sword"))
-  ) ?? $item`amok putter`;
+  ) ?? $item`seal-clubbing club`;
 
 export const banishSources: BanishSource[] = [
   {
@@ -58,7 +58,7 @@ export const banishSources: BanishSource[] = [
       }
       retrieveItem(availableClub);
     },
-    equip: availableClub,
+    equip: { weapon: availableClub },
     do: $skill`Batter Up!`,
   },
   {
