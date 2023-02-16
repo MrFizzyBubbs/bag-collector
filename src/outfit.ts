@@ -1,3 +1,7 @@
+import { args } from "./args";
+import { SimulatedState } from "./simulated-state";
+import { Engine } from "./engine/engine";
+import { gyou, maxBy } from "./lib";
 import { Outfit } from "grimoire-kolmafia";
 import {
   Familiar,
@@ -20,9 +24,6 @@ import {
   have,
   ReagnimatedGnome,
 } from "libram";
-import { gyou, maxBy } from "./lib";
-import { args } from "./main";
-import { Calculator } from "./calculator";
 
 export function isSober(): boolean {
   return myInebriety() <= inebrietyLimit() - Number(myFamiliar() === $familiar`Stooper`);
@@ -66,7 +67,9 @@ export function chooseOutfit(): Outfit {
     outfit.equipFirst($items`mime army infiltration glove, tiny black hole`);
   }
 
-  outfit.equipFirst($items`Greatest American Pants, navel ring of navel gazing`);
+  if (!Engine.runSource) {
+    outfit.equipFirst($items`Greatest American Pants, navel ring of navel gazing`);
+  }
 
   if (!have($effect`Everything Looks Yellow`) || gyou()) {
     outfit.equip($item`Jurassic Parka`);
@@ -88,7 +91,7 @@ export function chooseOutfit(): Outfit {
   outfit.equip($item`mafia thumb ring`);
   outfit.setModes({ parka: "ghostasaurus" });
 
-  const valuator = Calculator.prototype.valueOf.bind(Calculator.baseline(outfit));
+  const valuator = SimulatedState.prototype.valueOf.bind(SimulatedState.baseline(outfit));
   outfit.equip({
     modifier: `${valuator(1, 0)}familiar weight, ${valuator(0, 1)}item drop`,
     avoid: [$item`time-twitching toolbelt`],

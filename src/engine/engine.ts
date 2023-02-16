@@ -1,26 +1,67 @@
-import { Engine as BaseEngine, CombatResources, CombatStrategy, Outfit } from "grimoire-kolmafia";
-import {
-  cliExecute,
-  haveEffect,
-  Location,
-  myAdventures,
-  readCcs,
-  setAutoAttack,
-  writeCcs,
-} from "kolmafia";
-import { $effect, get, getBanishedMonsters, have, Macro, PropertiesManager } from "libram";
+import { args } from "../args";
+import { SimulatedState } from "../simulated-state";
 import { CombatActions, MyActionDefaults } from "./combat";
 import { equipFirst } from "./outfit";
 import { unusedBanishes } from "./resources";
 import { Task } from "./task";
+import { Engine as BaseEngine, CombatResources, CombatStrategy, Outfit } from "grimoire-kolmafia";
+import { haveEffect, haveEquipped, Item, mallPrice, myAdventures, toInt } from "kolmafia";
+import { $effect, $item, $items, getBanishedMonsters, have, Macro } from "libram";
 
-const grimoireCCS = "grimoire_macro";
+type FreeRun = { item: Item; successRate: number; price: number };
+const RUN_SOURCES = [
+  { item: $item`tattered scrap of paper`, successRate: 0.5 },
+  { item: $item`green smoke bomb`, successRate: 0.9 },
+  { item: $item`GOTO`, successRate: 0.3 },
+];
 
 export class Engine extends BaseEngine<CombatActions, Task> {
-  cachedCss = "";
+  static runSource: FreeRun | null = null;
+
+  static runMacro(): Macro {
+    if (!Engine.runSource)
+      return Macro.externalIf(
+        $items`navel ring of navel gazing, Greatest American Pants`.some((i) => haveEquipped(i)),
+        Macro.runaway()
+      );
+    return Macro.while_(
+      `hascombatitem ${toInt(Engine.runSource.item)}`,
+      Macro.item(Engine.runSource.item)
+    );
+  }
 
   constructor(tasks: Task[]) {
     super(tasks, { combat_defaults: new MyActionDefaults() });
+    if (args.freerun) {
+      Engine.runSource =
+        RUN_SOURCES.map(({ item, successRate }) => ({
+          item,
+          successRate,
+          price:
+            SimulatedState.current().bagsGainedPerAdv() * args.bagvalue -
+            mallPrice(item) / successRate, // Break-even price
+        }))
+          .sort((a, b) => b.price - a.price)
+          .find(({ price }) => price > 0) ?? null;
+    }
+  }
+
+  acquireItems(task: Task): void {
+    const items = task.acquire
+      ? typeof task.acquire === "function"
+        ? task.acquire()
+        : task.acquire
+      : [];
+
+    if (Engine.runSource) {
+      items.push({
+        ...Engine.runSource,
+        num: Math.ceil(
+          Math.log(1 / (1 - 0.999)) / Math.log(1 / (1 - Engine.runSource.successRate))
+        ), // Enough to guarantee success >= 99.9% of the time
+      });
+    }
+    super.acquireItems({ ...task, acquire: items });
   }
 
   execute(task: Task): void {
@@ -40,36 +81,6 @@ export class Engine extends BaseEngine<CombatActions, Task> {
     }
   }
 
-  setCombat(
-    task: Task,
-    task_combat: CombatStrategy<CombatActions>,
-    task_resources: CombatResources<CombatActions>
-  ): void {
-    // Save regular combat macro
-    const macro = task_combat.compile(
-      task_resources,
-      this.options?.combat_defaults,
-      task.do instanceof Location ? task.do : undefined
-    );
-
-    if (macro.toString() !== this.cachedCss) {
-      // Use the macro through a CCS file
-      this.cachedCss = macro.toString();
-      writeCcs(`[ default ]\n"${macro.toString()}"`, grimoireCCS);
-      cliExecute(`ccs ${grimoireCCS}`); // force Mafia to reparse the ccs
-    }
-
-    // Save autoattack combat macro
-    const autoattack = task_combat.compileAutoattack().step(macro);
-
-    if (autoattack.toString().length > 1) {
-      autoattack.save();
-      autoattack.setAutoAttack();
-    } else {
-      setAutoAttack(0);
-    }
-  }
-
   customize(
     task: Task,
     outfit: Outfit,
@@ -83,56 +94,7 @@ export class Engine extends BaseEngine<CombatActions, Task> {
     const alreadyBanished = [...getBanishedMonsters().values()];
     for (const monster of alreadyBanished) {
       const strategy = combat.currentStrategy(monster);
-      if (strategy === "banish") combat.macro(Macro.runaway(), monster);
+      if (strategy === "banish") combat.macro(Engine.runMacro(), monster);
     }
-  }
-
-  initPropertiesManager(manager: PropertiesManager): void {
-    // Properties adapted from garbo
-    manager.set({
-      logPreferenceChange: true,
-      logPreferenceChangeFilter: [
-        ...new Set([
-          ...get("logPreferenceChangeFilter").split(","),
-          "libram_savedMacro",
-          "maximizerMRUList",
-          "testudinalTeachings",
-          "_lastCombatStarted",
-        ]),
-      ]
-        .sort()
-        .filter((a) => a)
-        .join(","),
-      battleAction: "custom combat script",
-      autoSatisfyWithMall: true,
-      autoSatisfyWithNPCs: true,
-      autoSatisfyWithCoinmasters: true,
-      autoSatisfyWithStash: false,
-      dontStopForCounters: true,
-      maximizerFoldables: true,
-      afterAdventureScript: "",
-      betweenBattleScript: "",
-      choiceAdventureScript: "",
-      familiarScript: "",
-      currentMood: "apathetic",
-      autoTuxedo: true,
-      autoPinkyRing: true,
-      autoGarish: true,
-      allowNonMoodBurning: false,
-      allowSummonBurning: true,
-      libramSkillsSoftcore: "none",
-    });
-    if (this.options.ccs !== "") {
-      if (this.options.ccs === undefined && readCcs(grimoireCCS) === "") {
-        // Write a simple CCS so we can switch to it
-        writeCcs("[ default ]\nabort", grimoireCCS);
-      }
-      manager.set({ customCombatScript: this.options.ccs ?? grimoireCCS });
-    }
-  }
-
-  destruct(): void {
-    super.destruct();
-    setAutoAttack(0);
   }
 }
