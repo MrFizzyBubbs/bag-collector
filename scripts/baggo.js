@@ -11528,8 +11528,12 @@ var args = Args.create("baggo", "A script for farming duffel bags and van keys."
   }),
   olfact: Args.string({
     help: "Which monster to olfact.",
-    options: [["none", "Do no olfact."], ["burnout", "Drops van key (food)."], ["jock", "Drops duffel bag (booze)."]],
+    options: [["none", "Do no olfact."], ["burnout", "Drops van key (food)."], ["jock", "Drops duffel bag (booze)."], ["balance", "Automatically choose one of the above options to keep your available bags/keys relatively equal."]],
     default: "none"
+  }),
+  balance: Args.number({
+    help: "Maximum difference between your available bags/keys to be considered equal. This argument is only used when olfact=balance.",
+    default: 50
   }),
   buff: Args.flag({
     help: "Only do setup and buffing, do not adventure.",
@@ -13559,7 +13563,7 @@ function seasonalItems() {
   return currentUpgrades().includes("cowcatcher") ? 2 : 1;
 }
 ;// CONCATENATED MODULE: ./src/tasks/baggo.ts
-var baggo_templateObject, baggo_templateObject2, baggo_templateObject3, baggo_templateObject4, baggo_templateObject5, baggo_templateObject6, baggo_templateObject7, baggo_templateObject8, baggo_templateObject9, baggo_templateObject10, baggo_templateObject11, baggo_templateObject12, baggo_templateObject13, baggo_templateObject14, baggo_templateObject15, baggo_templateObject16, baggo_templateObject17, baggo_templateObject18, baggo_templateObject19, baggo_templateObject20, baggo_templateObject21, baggo_templateObject22, baggo_templateObject23, baggo_templateObject24, baggo_templateObject25, baggo_templateObject26, baggo_templateObject27, baggo_templateObject28, baggo_templateObject29, baggo_templateObject30, baggo_templateObject31, baggo_templateObject32, baggo_templateObject33, baggo_templateObject34, baggo_templateObject35, baggo_templateObject36;
+var baggo_templateObject, baggo_templateObject2, baggo_templateObject3, baggo_templateObject4, baggo_templateObject5, baggo_templateObject6, baggo_templateObject7, baggo_templateObject8, baggo_templateObject9, baggo_templateObject10, baggo_templateObject11, baggo_templateObject12, baggo_templateObject13, baggo_templateObject14, baggo_templateObject15, baggo_templateObject16, baggo_templateObject17, baggo_templateObject18, baggo_templateObject19, baggo_templateObject20, baggo_templateObject21, baggo_templateObject22, baggo_templateObject23, baggo_templateObject24, baggo_templateObject25, baggo_templateObject26, baggo_templateObject27, baggo_templateObject28, baggo_templateObject29, baggo_templateObject30, baggo_templateObject31, baggo_templateObject32, baggo_templateObject33, baggo_templateObject34, baggo_templateObject35, baggo_templateObject36, baggo_templateObject37, baggo_templateObject38, baggo_templateObject39, baggo_templateObject40, baggo_templateObject41, baggo_templateObject42;
 
 function baggo_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
@@ -13579,27 +13583,52 @@ function baggo_taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.s
 
 var floristFlowers = [StealingMagnolia, AloeGuvnor, PitcherPlant];
 var potionsCompleted = false;
+
+function olfactMonster() {
+  var bags = (0,external_kolmafia_namespaceObject.availableAmount)(template_string_$item(baggo_templateObject || (baggo_templateObject = baggo_taggedTemplateLiteral(["unremarkable duffel bag"]))));
+  var keys = (0,external_kolmafia_namespaceObject.availableAmount)(template_string_$item(baggo_templateObject2 || (baggo_templateObject2 = baggo_taggedTemplateLiteral(["van key"]))));
+  var diff = args.balance < 1 ? Math.abs((bags - keys) / ((bags + keys) / 2)) : Math.abs(bags - keys);
+
+  switch (args.olfact) {
+    case "none":
+      return undefined;
+
+    case "burnout":
+      return $monster(baggo_templateObject3 || (baggo_templateObject3 = baggo_taggedTemplateLiteral(["burnout"])));
+
+    case "jock":
+      return $monster(baggo_templateObject4 || (baggo_templateObject4 = baggo_taggedTemplateLiteral(["jock"])));
+
+    case "balance":
+      if (diff <= args.balance) return undefined;
+      return keys < bags ? $monster(baggo_templateObject5 || (baggo_templateObject5 = baggo_taggedTemplateLiteral(["burnout"]))) : $monster(baggo_templateObject6 || (baggo_templateObject6 = baggo_taggedTemplateLiteral(["jock"])));
+
+    default:
+      throw "Unknown olfact target: ".concat(args.olfact);
+  }
+}
+
 function BaggoQuest() {
   return {
     name: "Baggo",
     tasks: [{
       name: "Closet Massagers",
-      completed: () => (0,external_kolmafia_namespaceObject.itemAmount)(template_string_$item(baggo_templateObject || (baggo_templateObject = baggo_taggedTemplateLiteral(["personal massager"])))) === 0,
-      do: () => (0,external_kolmafia_namespaceObject.putCloset)((0,external_kolmafia_namespaceObject.itemAmount)(template_string_$item(baggo_templateObject2 || (baggo_templateObject2 = baggo_taggedTemplateLiteral(["personal massager"])))), template_string_$item(baggo_templateObject3 || (baggo_templateObject3 = baggo_taggedTemplateLiteral(["personal massager"])))),
+      completed: () => (0,external_kolmafia_namespaceObject.itemAmount)(template_string_$item(baggo_templateObject7 || (baggo_templateObject7 = baggo_taggedTemplateLiteral(["personal massager"])))) === 0,
+      do: () => (0,external_kolmafia_namespaceObject.putCloset)((0,external_kolmafia_namespaceObject.itemAmount)(template_string_$item(baggo_templateObject8 || (baggo_templateObject8 = baggo_taggedTemplateLiteral(["personal massager"])))), template_string_$item(baggo_templateObject9 || (baggo_templateObject9 = baggo_taggedTemplateLiteral(["personal massager"])))),
       limit: {
         tries: 1
       }
     }, {
       name: "Spice Ghost",
-      ready: () => (0,external_kolmafia_namespaceObject.myClass)() === $class(baggo_templateObject4 || (baggo_templateObject4 = baggo_taggedTemplateLiteral(["Pastamancer"]))) && have($skill(baggo_templateObject5 || (baggo_templateObject5 = baggo_taggedTemplateLiteral(["Bind Spice Ghost"])))),
-      completed: () => (0,external_kolmafia_namespaceObject.myThrall)() === $thrall(baggo_templateObject6 || (baggo_templateObject6 = baggo_taggedTemplateLiteral(["Spice Ghost"]))),
-      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(baggo_templateObject7 || (baggo_templateObject7 = baggo_taggedTemplateLiteral(["Bind Spice Ghost"])))),
+      ready: () => (0,external_kolmafia_namespaceObject.myClass)() === $class(baggo_templateObject10 || (baggo_templateObject10 = baggo_taggedTemplateLiteral(["Pastamancer"]))) && have($skill(baggo_templateObject11 || (baggo_templateObject11 = baggo_taggedTemplateLiteral(["Bind Spice Ghost"])))),
+      completed: () => (0,external_kolmafia_namespaceObject.myThrall)() === $thrall(baggo_templateObject12 || (baggo_templateObject12 = baggo_taggedTemplateLiteral(["Spice Ghost"]))),
+      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(baggo_templateObject13 || (baggo_templateObject13 = baggo_taggedTemplateLiteral(["Bind Spice Ghost"])))),
       limit: {
         tries: 1
       }
     }, {
       name: "Florist Friar",
-      ready: () => Florist_have() && (0,external_kolmafia_namespaceObject.myLocation)() === $location(baggo_templateObject8 || (baggo_templateObject8 = baggo_taggedTemplateLiteral(["The Neverending Party"]))),
+      ready: () => Florist_have() && (0,external_kolmafia_namespaceObject.myLocation)() === $location(baggo_templateObject14 || (baggo_templateObject14 = baggo_taggedTemplateLiteral(["The Neverending Party"]))),
       completed: () => isFull() || floristFlowers.every(flower => !flower.available()),
       do: () => floristFlowers.forEach(flower => flower.plant()),
       limit: {
@@ -13609,10 +13638,10 @@ function BaggoQuest() {
       name: "Autumn-Aton",
       ready: () => available(),
       completed: () => currentlyIn() !== null,
-      do: () => sendTo($location(baggo_templateObject9 || (baggo_templateObject9 = baggo_taggedTemplateLiteral(["The Neverending Party"]))))
+      do: () => sendTo($location(baggo_templateObject15 || (baggo_templateObject15 = baggo_taggedTemplateLiteral(["The Neverending Party"]))))
     }, {
       name: "Cold Medicine Cabinet",
-      ready: () => (0,external_kolmafia_namespaceObject.getWorkshed)() === template_string_$item(baggo_templateObject10 || (baggo_templateObject10 = baggo_taggedTemplateLiteral(["cold medicine cabinet"]))) && property_get("_nextColdMedicineConsult") <= (0,external_kolmafia_namespaceObject.totalTurnsPlayed)() && (0,external_kolmafia_namespaceObject.expectedColdMedicineCabinet)()["pill"] === template_string_$item(baggo_templateObject11 || (baggo_templateObject11 = baggo_taggedTemplateLiteral(["Extrovermectin\u2122"]))),
+      ready: () => (0,external_kolmafia_namespaceObject.getWorkshed)() === template_string_$item(baggo_templateObject16 || (baggo_templateObject16 = baggo_taggedTemplateLiteral(["cold medicine cabinet"]))) && property_get("_nextColdMedicineConsult") <= (0,external_kolmafia_namespaceObject.totalTurnsPlayed)() && (0,external_kolmafia_namespaceObject.expectedColdMedicineCabinet)()["pill"] === template_string_$item(baggo_templateObject17 || (baggo_templateObject17 = baggo_taggedTemplateLiteral(["Extrovermectin\u2122"]))),
       completed: () => property_get("_coldMedicineConsults") >= 5,
       do: () => {
         (0,external_kolmafia_namespaceObject.visitUrl)("campground.php?action=workshed");
@@ -13631,7 +13660,7 @@ function BaggoQuest() {
       outfit: chooseOutfit
     }, {
       name: "Proton Ghost",
-      ready: () => have(template_string_$item(baggo_templateObject12 || (baggo_templateObject12 = baggo_taggedTemplateLiteral(["protonic accelerator pack"])))) && (0,external_kolmafia_namespaceObject.canAdventure)(property_get("ghostLocation", external_kolmafia_namespaceObject.Location.none)) && (0,external_kolmafia_namespaceObject.myAdventures)() > 0,
+      ready: () => have(template_string_$item(baggo_templateObject18 || (baggo_templateObject18 = baggo_taggedTemplateLiteral(["protonic accelerator pack"])))) && (0,external_kolmafia_namespaceObject.canAdventure)(property_get("ghostLocation", external_kolmafia_namespaceObject.Location.none)) && (0,external_kolmafia_namespaceObject.myAdventures)() > 0,
       completed: () => property_get("questPAGhost") === "unstarted" || args.buff,
       do: () => {
         var location = property_get("ghostLocation");
@@ -13644,15 +13673,15 @@ function BaggoQuest() {
       },
       outfit: () => {
         return baggo_objectSpread(baggo_objectSpread({}, chooseOutfit().spec()), {}, {
-          back: template_string_$item(baggo_templateObject13 || (baggo_templateObject13 = baggo_taggedTemplateLiteral(["protonic accelerator pack"])))
+          back: template_string_$item(baggo_templateObject19 || (baggo_templateObject19 = baggo_taggedTemplateLiteral(["protonic accelerator pack"])))
         });
       },
-      combat: new combat_CombatStrategy().macro(Macro.trySkill($skill(baggo_templateObject14 || (baggo_templateObject14 = baggo_taggedTemplateLiteral(["Sing Along"])))).trySkill($skill(baggo_templateObject15 || (baggo_templateObject15 = baggo_taggedTemplateLiteral(["Summon Love Gnats"])))).trySkill($skill(baggo_templateObject16 || (baggo_templateObject16 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject17 || (baggo_templateObject17 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject18 || (baggo_templateObject18 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject19 || (baggo_templateObject19 = baggo_taggedTemplateLiteral(["Trap Ghost"])))))
+      combat: new combat_CombatStrategy().macro(Macro.trySkill($skill(baggo_templateObject20 || (baggo_templateObject20 = baggo_taggedTemplateLiteral(["Sing Along"])))).trySkill($skill(baggo_templateObject21 || (baggo_templateObject21 = baggo_taggedTemplateLiteral(["Summon Love Gnats"])))).trySkill($skill(baggo_templateObject22 || (baggo_templateObject22 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject23 || (baggo_templateObject23 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject24 || (baggo_templateObject24 = baggo_taggedTemplateLiteral(["Shoot Ghost"])))).trySkill($skill(baggo_templateObject25 || (baggo_templateObject25 = baggo_taggedTemplateLiteral(["Trap Ghost"])))))
     }, {
       name: "Party Fair",
       completed: () => property_get("_questPartyFair") !== "unstarted" || args.buff,
       do: () => {
-        (0,external_kolmafia_namespaceObject.visitUrl)((0,external_kolmafia_namespaceObject.toUrl)($location(baggo_templateObject20 || (baggo_templateObject20 = baggo_taggedTemplateLiteral(["The Neverending Party"])))));
+        (0,external_kolmafia_namespaceObject.visitUrl)((0,external_kolmafia_namespaceObject.toUrl)($location(baggo_templateObject26 || (baggo_templateObject26 = baggo_taggedTemplateLiteral(["The Neverending Party"])))));
         if (["food", "booze"].includes(property_get("_questPartyFairQuest"))) (0,external_kolmafia_namespaceObject.runChoice)(1);else (0,external_kolmafia_namespaceObject.runChoice)(2);
       },
       limit: {
@@ -13666,15 +13695,16 @@ function BaggoQuest() {
         bubbleVision();
         if (gyou()) (0,external_kolmafia_namespaceObject.restoreHp)((0,external_kolmafia_namespaceObject.myMaxhp)());
       },
-      do: $location(baggo_templateObject21 || (baggo_templateObject21 = baggo_taggedTemplateLiteral(["The Neverending Party"]))),
+      do: $location(baggo_templateObject27 || (baggo_templateObject27 = baggo_taggedTemplateLiteral(["The Neverending Party"]))),
       outfit: chooseOutfit,
-      effects: [$skill(baggo_templateObject22 || (baggo_templateObject22 = baggo_taggedTemplateLiteral(["Blood Bond"]))), $skill(baggo_templateObject23 || (baggo_templateObject23 = baggo_taggedTemplateLiteral(["Leash of Linguini"]))), $skill(baggo_templateObject24 || (baggo_templateObject24 = baggo_taggedTemplateLiteral(["Empathy of the Newt"]))), $skill(baggo_templateObject25 || (baggo_templateObject25 = baggo_taggedTemplateLiteral(["The Spirit of Taking"]))), $skill(baggo_templateObject26 || (baggo_templateObject26 = baggo_taggedTemplateLiteral(["Fat Leon's Phat Loot Lyric"]))), $skill(baggo_templateObject27 || (baggo_templateObject27 = baggo_taggedTemplateLiteral(["Singer's Faithful Ocelot"]))), $skill(baggo_templateObject28 || (baggo_templateObject28 = baggo_taggedTemplateLiteral(["Astral Shell"]))), $skill(baggo_templateObject29 || (baggo_templateObject29 = baggo_taggedTemplateLiteral(["Ghostly Shell"])))].filter(skill => have(skill)).map(skill => (0,external_kolmafia_namespaceObject.toEffect)(skill)),
+      effects: [$skill(baggo_templateObject28 || (baggo_templateObject28 = baggo_taggedTemplateLiteral(["Blood Bond"]))), $skill(baggo_templateObject29 || (baggo_templateObject29 = baggo_taggedTemplateLiteral(["Leash of Linguini"]))), $skill(baggo_templateObject30 || (baggo_templateObject30 = baggo_taggedTemplateLiteral(["Empathy of the Newt"]))), $skill(baggo_templateObject31 || (baggo_templateObject31 = baggo_taggedTemplateLiteral(["The Spirit of Taking"]))), $skill(baggo_templateObject32 || (baggo_templateObject32 = baggo_taggedTemplateLiteral(["Fat Leon's Phat Loot Lyric"]))), $skill(baggo_templateObject33 || (baggo_templateObject33 = baggo_taggedTemplateLiteral(["Singer's Faithful Ocelot"]))), $skill(baggo_templateObject34 || (baggo_templateObject34 = baggo_taggedTemplateLiteral(["Astral Shell"]))), $skill(baggo_templateObject35 || (baggo_templateObject35 = baggo_taggedTemplateLiteral(["Ghostly Shell"])))].filter(skill => have(skill)).map(skill => (0,external_kolmafia_namespaceObject.toEffect)(skill)),
       choices: {
         1324: 5
       },
-      combat: new combat_CombatStrategy().banish($monsters(baggo_templateObject30 || (baggo_templateObject30 = baggo_taggedTemplateLiteral(["biker, party girl, \"plain\" girl"])))).autoattack(() => Macro.externalIf(!gyou(), Macro.if_("!hppercentbelow 75", Macro.step("pickpocket")), Macro.step("pickpocket")).if_("match \"unremarkable duffel bag\" || match \"van key\"", engine_Engine.runMacro()) // TODO only runaway if we have a navel runaway, consider tatters/GOTOs
-      .trySkill($skill(baggo_templateObject31 || (baggo_templateObject31 = baggo_taggedTemplateLiteral(["Spit jurassic acid"])))).trySkill($skill(baggo_templateObject32 || (baggo_templateObject32 = baggo_taggedTemplateLiteral(["Summon Love Gnats"])))).if_("!hppercentbelow 75 && !mpbelow 40", Macro.trySkill($skill(baggo_templateObject33 || (baggo_templateObject33 = baggo_taggedTemplateLiteral(["Double Nanovision"])))).trySkill($skill(baggo_templateObject34 || (baggo_templateObject34 = baggo_taggedTemplateLiteral(["Double Nanovision"]))))), $monsters(baggo_templateObject35 || (baggo_templateObject35 = baggo_taggedTemplateLiteral(["burnout, jock"])))).autoattack(() => {
-        return args.olfact !== "none" ? Macro.if_(external_kolmafia_namespaceObject.Monster.get(args.olfact), Macro.trySkill($skill(baggo_templateObject36 || (baggo_templateObject36 = baggo_taggedTemplateLiteral(["Transcendent Olfaction"]))))) : new Macro();
+      combat: new combat_CombatStrategy().banish($monsters(baggo_templateObject36 || (baggo_templateObject36 = baggo_taggedTemplateLiteral(["biker, party girl, \"plain\" girl"])))).autoattack(() => Macro.externalIf(!gyou(), Macro.if_("!hppercentbelow 75", Macro.step("pickpocket")), Macro.step("pickpocket")).if_("match \"unremarkable duffel bag\" || match \"van key\"", engine_Engine.runMacro()) // TODO only runaway if we have a navel runaway, consider tatters/GOTOs
+      .trySkill($skill(baggo_templateObject37 || (baggo_templateObject37 = baggo_taggedTemplateLiteral(["Spit jurassic acid"])))).trySkill($skill(baggo_templateObject38 || (baggo_templateObject38 = baggo_taggedTemplateLiteral(["Summon Love Gnats"])))).if_("!hppercentbelow 75 && !mpbelow 40", Macro.trySkill($skill(baggo_templateObject39 || (baggo_templateObject39 = baggo_taggedTemplateLiteral(["Double Nanovision"])))).trySkill($skill(baggo_templateObject40 || (baggo_templateObject40 = baggo_taggedTemplateLiteral(["Double Nanovision"]))))), $monsters(baggo_templateObject41 || (baggo_templateObject41 = baggo_taggedTemplateLiteral(["burnout, jock"])))).autoattack(() => {
+        var olfact = olfactMonster();
+        return olfact ? Macro.if_(olfact, Macro.trySkill($skill(baggo_templateObject42 || (baggo_templateObject42 = baggo_taggedTemplateLiteral(["Transcendent Olfaction"]))))) : new Macro();
       }).kill()
     }]
   };
