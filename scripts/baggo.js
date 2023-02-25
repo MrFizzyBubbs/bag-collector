@@ -12375,7 +12375,7 @@ function unusedBanishes(to_banish) {
   return banishSources.filter(banish => banish.available() && !used_banishes.has(banish.do));
 }
 ;// CONCATENATED MODULE: ./src/engine/engine.ts
-var engine_engine_templateObject, engine_templateObject2, engine_templateObject3, engine_templateObject4, engine_templateObject5, engine_templateObject6, engine_templateObject7, engine_templateObject8, engine_templateObject9, engine_templateObject10;
+var engine_engine_templateObject, engine_templateObject2, engine_templateObject3, engine_templateObject4, engine_templateObject5, engine_templateObject6, engine_templateObject7, engine_templateObject8, engine_templateObject9, engine_templateObject10, engine_templateObject11, engine_templateObject12;
 
 function engine_engine_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = engine_engine_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
@@ -12531,10 +12531,19 @@ var engine_Engine = /*#__PURE__*/function (_BaseEngine) {
         _iterator.f();
       }
     }
+  }, {
+    key: "prepare",
+    value: function prepare(task) {
+      engine_get(engine_getPrototypeOf(Engine.prototype), "prepare", this).call(this, task);
+
+      if (task.combat !== undefined && (0,external_kolmafia_namespaceObject.myHp)() < (0,external_kolmafia_namespaceObject.myMaxhp)() * 0.9 && have($skill(engine_templateObject10 || (engine_templateObject10 = engine_engine_taggedTemplateLiteral(["Cannelloni Cocoon"]))))) {
+        (0,external_kolmafia_namespaceObject.useSkill)($skill(engine_templateObject11 || (engine_templateObject11 = engine_engine_taggedTemplateLiteral(["Cannelloni Cocoon"]))));
+      }
+    }
   }], [{
     key: "runMacro",
     value: function runMacro() {
-      if (!Engine.runSource) return Macro.externalIf(template_string_$items(engine_templateObject10 || (engine_templateObject10 = engine_engine_taggedTemplateLiteral(["navel ring of navel gazing, Greatest American Pants"]))).some(i => (0,external_kolmafia_namespaceObject.haveEquipped)(i)), Macro.runaway());
+      if (!Engine.runSource) return Macro.externalIf(template_string_$items(engine_templateObject12 || (engine_templateObject12 = engine_engine_taggedTemplateLiteral(["navel ring of navel gazing, Greatest American Pants"]))).some(i => (0,external_kolmafia_namespaceObject.haveEquipped)(i)), Macro.runaway());
       return Macro.while_("hascombatitem ".concat((0,external_kolmafia_namespaceObject.toInt)(Engine.runSource.item)), Macro.item(Engine.runSource.item));
     }
   }]);
