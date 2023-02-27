@@ -12987,7 +12987,7 @@ function chooseOutfit() {
     return outfit;
   }
 
-  if (!$classes(src_outfit_templateObject7 || (src_outfit_templateObject7 = src_outfit_taggedTemplateLiteral(["Disco Bandit, Accordion Thief"]))).includes((0,external_kolmafia_namespaceObject.myClass)())) {
+  if (!$classes(src_outfit_templateObject7 || (src_outfit_templateObject7 = src_outfit_taggedTemplateLiteral(["Disco Bandit, Accordion Thief"]))).includes((0,external_kolmafia_namespaceObject.myClass)()) && isSober()) {
     outfit.equipFirst(template_string_$items(src_outfit_templateObject8 || (src_outfit_templateObject8 = src_outfit_taggedTemplateLiteral(["mime army infiltration glove, tiny black hole"]))));
   }
 
@@ -12995,7 +12995,7 @@ function chooseOutfit() {
     outfit.equipFirst(template_string_$items(src_outfit_templateObject9 || (src_outfit_templateObject9 = src_outfit_taggedTemplateLiteral(["Greatest American Pants, navel ring of navel gazing"]))));
   }
 
-  if (!have($effect(src_outfit_templateObject10 || (src_outfit_templateObject10 = src_outfit_taggedTemplateLiteral(["Everything Looks Yellow"])))) || gyou()) {
+  if (!have($effect(src_outfit_templateObject10 || (src_outfit_templateObject10 = src_outfit_taggedTemplateLiteral(["Everything Looks Yellow"])))) && isSober() || gyou()) {
     outfit.equip(template_string_$item(src_outfit_templateObject11 || (src_outfit_templateObject11 = src_outfit_taggedTemplateLiteral(["Jurassic Parka"]))));
     outfit.setModes({
       parka: !have($effect(src_outfit_templateObject12 || (src_outfit_templateObject12 = src_outfit_taggedTemplateLiteral(["Everything Looks Yellow"])))) ? "dilophosaur" : "kachungasaur"
@@ -13688,7 +13688,7 @@ function BaggoQuest() {
       choices: {
         1324: 5
       },
-      combat: new combat_CombatStrategy().banish($monsters(baggo_templateObject30 || (baggo_templateObject30 = baggo_taggedTemplateLiteral(["biker, party girl, \"plain\" girl"])))).macro(() => Macro.externalIf(!gyou(), Macro.if_("!hppercentbelow 75", Macro.step("pickpocket")), Macro.step("pickpocket")).if_("match \"unremarkable duffel bag\" || match \"van key\"", engine_Engine.runMacro()) // TODO only runaway if we have a navel runaway, consider tatters/GOTOs
+      combat: new combat_CombatStrategy().startingMacro(() => Macro.externalIf(!isSober(), Macro.attack().repeat())).banish($monsters(baggo_templateObject30 || (baggo_templateObject30 = baggo_taggedTemplateLiteral(["biker, party girl, \"plain\" girl"])))).macro(() => Macro.externalIf(!gyou(), Macro.if_("!hppercentbelow 75", Macro.step("pickpocket")), Macro.step("pickpocket")).if_("match \"unremarkable duffel bag\" || match \"van key\"", engine_Engine.runMacro()) // TODO only runaway if we have a navel runaway, consider tatters/GOTOs
       .trySkill($skill(baggo_templateObject31 || (baggo_templateObject31 = baggo_taggedTemplateLiteral(["Spit jurassic acid"])))).trySkill($skill(baggo_templateObject32 || (baggo_templateObject32 = baggo_taggedTemplateLiteral(["Summon Love Gnats"])))).if_("!hppercentbelow 75 && !mpbelow 40", Macro.trySkill($skill(baggo_templateObject33 || (baggo_templateObject33 = baggo_taggedTemplateLiteral(["Double Nanovision"])))).trySkill($skill(baggo_templateObject34 || (baggo_templateObject34 = baggo_taggedTemplateLiteral(["Double Nanovision"]))))), $monsters(baggo_templateObject35 || (baggo_templateObject35 = baggo_taggedTemplateLiteral(["burnout, jock"])))).macro(() => {
         return olfactMonster ? Macro.if_(olfactMonster, Macro.trySkill($skill(baggo_templateObject36 || (baggo_templateObject36 = baggo_taggedTemplateLiteral(["Transcendent Olfaction"]))))) : new Macro();
       }).kill()
