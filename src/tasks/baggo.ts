@@ -1,5 +1,5 @@
 import { args } from "../args";
-import { CombatStrategy } from "../engine/combat";
+import { BaggoStrategy, Macro } from "../engine/combat";
 import { Engine } from "../engine/engine";
 import { Quest } from "../engine/task";
 import { gyou, turnsRemaining } from "../lib";
@@ -39,7 +39,6 @@ import {
   FloristFriar,
   get,
   have,
-  Macro,
 } from "libram";
 import { olfactMonster } from "../main";
 
@@ -122,7 +121,7 @@ export function BaggoQuest(): Quest {
         outfit: (): OutfitSpec => {
           return { ...chooseOutfit().spec(), back: $item`protonic accelerator pack` };
         },
-        combat: new CombatStrategy().macro(
+        combat: new BaggoStrategy().autoAndMacro(
           Macro.trySkill($skill`Sing Along`)
             .trySkill($skill`Summon Love Gnats`)
             .trySkill($skill`Shoot Ghost`)
@@ -164,9 +163,9 @@ export function BaggoQuest(): Quest {
           .filter((skill) => have(skill))
           .map((skill) => toEffect(skill)),
         choices: { 1324: 5 },
-        combat: new CombatStrategy()
-          .banish($monsters`biker, party girl, "plain" girl`)
-          .macro(
+        combat: new BaggoStrategy()
+          .autoAndMacro(Macro.runaway(), $monsters`biker, party girl, "plain" girl`)
+          .autoAndMacro(
             () =>
               Macro.externalIf(
                 !gyou(),
@@ -182,12 +181,11 @@ export function BaggoQuest(): Quest {
                 ),
             $monsters`burnout, jock`
           )
-          .macro((): Macro => {
+          .autoAndMacro((): Macro => {
             return olfactMonster
-              ? Macro.if_(olfactMonster, Macro.trySkill($skill`Transcendent Olfaction`))
-              : new Macro();
-          })
-          .kill(),
+              ? Macro.if_(olfactMonster, Macro.trySkill($skill`Transcendent Olfaction`)).kill()
+              : Macro.kill();
+          }),
       },
     ],
   };

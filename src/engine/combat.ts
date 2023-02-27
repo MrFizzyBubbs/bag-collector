@@ -1,12 +1,17 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { ActionDefaults, CombatStrategy as BaseCombatStrategy } from "grimoire-kolmafia";
-import { $item, $skill, Macro } from "libram";
+import { CombatStrategy, DelayedMacro } from "grimoire-kolmafia";
+import { Monster } from "kolmafia";
+import { $item, $skill, StrictMacro } from "libram";
 
-const myActions = ["kill", "banish"] as const;
-export type CombatActions = typeof myActions[number];
-export class CombatStrategy extends BaseCombatStrategy.withActions(myActions) {}
-export class MyActionDefaults implements ActionDefaults<CombatActions> {
-  kill() {
+export class Macro extends StrictMacro {
+  private delevel(): this {
+    return this.trySkill($skill`Micrometeorite`)
+      .tryItem($item`Rain-Doh indigo cup`)
+      .trySkill($skill`Summon Love Mosquito`)
+      .tryItem($item`Time-Spinner`)
+      .tryItem($item`HOA citation pad`);
+  }
+
+  kill(): this {
     return this.delevel()
       .trySkill($skill`Sing Along`)
       .trySkill($skill`Bowl Straight Up`)
@@ -14,15 +19,13 @@ export class MyActionDefaults implements ActionDefaults<CombatActions> {
       .repeat();
   }
 
-  banish() {
-    return Macro.runaway(); // If no resource provided
+  static kill(): Macro {
+    return new Macro().kill();
   }
+}
 
-  private delevel() {
-    return Macro.trySkill($skill`Micrometeorite`)
-      .tryItem($item`Rain-Doh indigo cup`)
-      .trySkill($skill`Summon Love Mosquito`)
-      .tryItem($item`Time-Spinner`)
-      .tryItem($item`HOA citation pad`);
+export class BaggoStrategy extends CombatStrategy {
+  autoAndMacro(macro: DelayedMacro, monsters?: Monster | Monster[]): this {
+    return this.autoattack(macro, monsters).macro(macro, monsters);
   }
 }
