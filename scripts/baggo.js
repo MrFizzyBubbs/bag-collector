@@ -14223,7 +14223,7 @@ function dropProgress() {
   return get("_boomBoxFights");
 }
 ;// CONCATENATED MODULE: ./src/tasks/dailies.ts
-var dailies_templateObject, dailies_templateObject2, dailies_templateObject3, dailies_templateObject4, dailies_templateObject5, dailies_templateObject6, dailies_templateObject7, dailies_templateObject8, dailies_templateObject9, dailies_templateObject10, dailies_templateObject11, dailies_templateObject12, dailies_templateObject13, dailies_templateObject14, dailies_templateObject15, dailies_templateObject16, dailies_templateObject17, dailies_templateObject18, dailies_templateObject19, dailies_templateObject20, dailies_templateObject21, dailies_templateObject22, dailies_templateObject23, dailies_templateObject24, dailies_templateObject25, dailies_templateObject26, dailies_templateObject27, dailies_templateObject28, dailies_templateObject29, dailies_templateObject30, dailies_templateObject31, dailies_templateObject32, dailies_templateObject33;
+var dailies_templateObject, dailies_templateObject2, dailies_templateObject3, dailies_templateObject4, dailies_templateObject5, dailies_templateObject6, dailies_templateObject7, dailies_templateObject8, dailies_templateObject9, dailies_templateObject10, dailies_templateObject11, dailies_templateObject12, dailies_templateObject13, dailies_templateObject14, dailies_templateObject15, dailies_templateObject16, dailies_templateObject17, dailies_templateObject18, dailies_templateObject19, dailies_templateObject20, dailies_templateObject21, dailies_templateObject22, dailies_templateObject23, dailies_templateObject24, dailies_templateObject25, dailies_templateObject26, dailies_templateObject27, dailies_templateObject28, dailies_templateObject29, dailies_templateObject30, dailies_templateObject31, dailies_templateObject32, dailies_templateObject33, dailies_templateObject34;
 
 function dailies_taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -14323,8 +14323,16 @@ function DailiesQuest() {
         tries: 1
       }
     }, {
+      name: "GAP Vision",
+      ready: () => have(template_string_$item(dailies_templateObject15 || (dailies_templateObject15 = dailies_taggedTemplateLiteral(["Greatest American Pants"])))) && property_get("_gapBuffs") < 5,
+      completed: () => property_get("_gapBuffs") >= 5,
+      do: () => (0,external_kolmafia_namespaceObject.cliExecute)("gap Vision"),
+      limit: {
+        tries: 5
+      }
+    }, {
       name: "Mummery Item",
-      ready: () => have(template_string_$item(dailies_templateObject15 || (dailies_templateObject15 = dailies_taggedTemplateLiteral(["mumming trunk"])))),
+      ready: () => have(template_string_$item(dailies_templateObject16 || (dailies_templateObject16 = dailies_taggedTemplateLiteral(["mumming trunk"])))),
       completed: () => property_get("_mummeryMods").includes("Item Drop"),
       do: () => (0,external_kolmafia_namespaceObject.cliExecute)("mummery item"),
       outfit: () => itemFamiliarSpec(),
@@ -14333,7 +14341,7 @@ function DailiesQuest() {
       }
     }, {
       name: "Clan Fortune",
-      ready: () => template_string_$item(dailies_templateObject16 || (dailies_templateObject16 = dailies_taggedTemplateLiteral(["Clan Carnival Game"]))).name in (0,external_kolmafia_namespaceObject.getClanLounge)(),
+      ready: () => template_string_$item(dailies_templateObject17 || (dailies_templateObject17 = dailies_taggedTemplateLiteral(["Clan Carnival Game"]))).name in (0,external_kolmafia_namespaceObject.getClanLounge)(),
       completed: () => property_get("_clanFortuneBuffUsed"),
       do: () => (0,external_kolmafia_namespaceObject.cliExecute)("fortune buff item")
     }, {
@@ -14346,7 +14354,7 @@ function DailiesQuest() {
       }
     }, {
       name: "Cosplay Saber",
-      ready: () => have(template_string_$item(dailies_templateObject17 || (dailies_templateObject17 = dailies_taggedTemplateLiteral(["Fourth of May Cosplay Saber"])))),
+      ready: () => have(template_string_$item(dailies_templateObject18 || (dailies_templateObject18 = dailies_taggedTemplateLiteral(["Fourth of May Cosplay Saber"])))),
       completed: () => property_get("_saberMod") !== 0,
       do: () => (0,external_kolmafia_namespaceObject.cliExecute)("saber familiar"),
       limit: {
@@ -14354,29 +14362,29 @@ function DailiesQuest() {
       }
     }, {
       name: "Bird Calendar",
-      ready: () => have(template_string_$item(dailies_templateObject18 || (dailies_templateObject18 = dailies_taggedTemplateLiteral(["Bird-a-Day calendar"])))),
-      completed: () => have($skill(dailies_templateObject19 || (dailies_templateObject19 = dailies_taggedTemplateLiteral(["Seek out a Bird"])))),
-      do: () => (0,external_kolmafia_namespaceObject.use)(1, template_string_$item(dailies_templateObject20 || (dailies_templateObject20 = dailies_taggedTemplateLiteral(["Bird-a-Day calendar"])))),
+      ready: () => have(template_string_$item(dailies_templateObject19 || (dailies_templateObject19 = dailies_taggedTemplateLiteral(["Bird-a-Day calendar"])))),
+      completed: () => have($skill(dailies_templateObject20 || (dailies_templateObject20 = dailies_taggedTemplateLiteral(["Seek out a Bird"])))),
+      do: () => (0,external_kolmafia_namespaceObject.use)(1, template_string_$item(dailies_templateObject21 || (dailies_templateObject21 = dailies_taggedTemplateLiteral(["Bird-a-Day calendar"])))),
       limit: {
         tries: 1
       }
     }, {
       name: "Daily Bird",
       after: ["Bird Calendar"],
-      ready: () => modifier_get("Item Drop", $effect(dailies_templateObject21 || (dailies_templateObject21 = dailies_taggedTemplateLiteral(["Blessing of the Bird"])))) > 0 || modifier_get("Familiar Weight", $effect(dailies_templateObject22 || (dailies_templateObject22 = dailies_taggedTemplateLiteral(["Blessing of the Bird"])))) > 0,
+      ready: () => modifier_get("Item Drop", $effect(dailies_templateObject22 || (dailies_templateObject22 = dailies_taggedTemplateLiteral(["Blessing of the Bird"])))) > 0 || modifier_get("Familiar Weight", $effect(dailies_templateObject23 || (dailies_templateObject23 = dailies_taggedTemplateLiteral(["Blessing of the Bird"])))) > 0,
       completed: () => property_get("_birdsSoughtToday") >= 6,
-      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(dailies_templateObject23 || (dailies_templateObject23 = dailies_taggedTemplateLiteral(["Seek out a Bird"]))), 6 - property_get("_birdsSoughtToday"))
+      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(dailies_templateObject24 || (dailies_templateObject24 = dailies_taggedTemplateLiteral(["Seek out a Bird"]))), 6 - property_get("_birdsSoughtToday"))
     }, {
       name: "Favorite Bird",
       after: ["Bird Calendar"],
-      ready: () => have($skill(dailies_templateObject24 || (dailies_templateObject24 = dailies_taggedTemplateLiteral(["Visit your Favorite Bird"])))) && (modifier_get("Item Drop", $effect(dailies_templateObject25 || (dailies_templateObject25 = dailies_taggedTemplateLiteral(["Blessing of your favorite Bird"])))) > 0 || modifier_get("Familiar Weight", $effect(dailies_templateObject26 || (dailies_templateObject26 = dailies_taggedTemplateLiteral(["Blessing of your favorite Bird"])))) > 0),
+      ready: () => have($skill(dailies_templateObject25 || (dailies_templateObject25 = dailies_taggedTemplateLiteral(["Visit your Favorite Bird"])))) && (modifier_get("Item Drop", $effect(dailies_templateObject26 || (dailies_templateObject26 = dailies_taggedTemplateLiteral(["Blessing of your favorite Bird"])))) > 0 || modifier_get("Familiar Weight", $effect(dailies_templateObject27 || (dailies_templateObject27 = dailies_taggedTemplateLiteral(["Blessing of your favorite Bird"])))) > 0),
       completed: () => property_get("_favoriteBirdVisited"),
-      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(dailies_templateObject27 || (dailies_templateObject27 = dailies_taggedTemplateLiteral(["Visit your Favorite Bird"]))))
-    }].concat(dailies_toConsumableArray(buyPull(template_string_$item(dailies_templateObject28 || (dailies_templateObject28 = dailies_taggedTemplateLiteral(["human musk"]))), 15000)), dailies_toConsumableArray(buyPull(template_string_$item(dailies_templateObject29 || (dailies_templateObject29 = dailies_taggedTemplateLiteral(["ice house"]))), 50000)), [pull(template_string_$item(dailies_templateObject30 || (dailies_templateObject30 = dailies_taggedTemplateLiteral(["mime army infiltration glove"])))), {
+      do: () => (0,external_kolmafia_namespaceObject.useSkill)($skill(dailies_templateObject28 || (dailies_templateObject28 = dailies_taggedTemplateLiteral(["Visit your Favorite Bird"]))))
+    }].concat(dailies_toConsumableArray(buyPull(template_string_$item(dailies_templateObject29 || (dailies_templateObject29 = dailies_taggedTemplateLiteral(["human musk"]))), 15000)), dailies_toConsumableArray(buyPull(template_string_$item(dailies_templateObject30 || (dailies_templateObject30 = dailies_taggedTemplateLiteral(["ice house"]))), 50000)), [pull(template_string_$item(dailies_templateObject31 || (dailies_templateObject31 = dailies_taggedTemplateLiteral(["mime army infiltration glove"])))), {
       name: "Craft Tiny Black Hole",
-      ready: () => !have(template_string_$item(dailies_templateObject31 || (dailies_templateObject31 = dailies_taggedTemplateLiteral(["mime army infiltration glove"])))),
-      do: () => (0,external_kolmafia_namespaceObject.retrieveItem)(template_string_$item(dailies_templateObject32 || (dailies_templateObject32 = dailies_taggedTemplateLiteral(["tiny black hole"])))),
-      completed: () => have(template_string_$item(dailies_templateObject33 || (dailies_templateObject33 = dailies_taggedTemplateLiteral(["tiny black hole"])))),
+      ready: () => !have(template_string_$item(dailies_templateObject32 || (dailies_templateObject32 = dailies_taggedTemplateLiteral(["mime army infiltration glove"])))),
+      do: () => (0,external_kolmafia_namespaceObject.retrieveItem)(template_string_$item(dailies_templateObject33 || (dailies_templateObject33 = dailies_taggedTemplateLiteral(["tiny black hole"])))),
+      completed: () => have(template_string_$item(dailies_templateObject34 || (dailies_templateObject34 = dailies_taggedTemplateLiteral(["tiny black hole"])))),
       limit: {
         tries: 1
       }
