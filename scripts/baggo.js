@@ -14326,7 +14326,10 @@ function DailiesQuest() {
       name: "GAP Vision",
       ready: () => have(template_string_$item(dailies_templateObject15 || (dailies_templateObject15 = dailies_taggedTemplateLiteral(["Greatest American Pants"])))) && property_get("_gapBuffs") < 5,
       completed: () => property_get("_gapBuffs") >= 5,
-      do: () => (0,external_kolmafia_namespaceObject.equip)(template_string_$item(dailies_templateObject16 || (dailies_templateObject16 = dailies_taggedTemplateLiteral(["Greatest American Pants"])))) && (0,external_kolmafia_namespaceObject.cliExecute)("gap Vision"),
+      do: () => (0,external_kolmafia_namespaceObject.cliExecute)("gap Vision"),
+      outfit: {
+        pants: template_string_$item(dailies_templateObject16 || (dailies_templateObject16 = dailies_taggedTemplateLiteral(["Greatest American Pants"])))
+      },
       limit: {
         tries: 5
       }
