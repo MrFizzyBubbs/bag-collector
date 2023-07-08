@@ -4,7 +4,7 @@ import { Engine } from "./engine/engine";
 import { gyou, isSober } from "./lib";
 import { Outfit } from "grimoire-kolmafia";
 import { myClass, outfitPieces, totalTurnsPlayed } from "kolmafia";
-import { $classes, $effect, $item, $items, $slot, get, have } from "libram";
+import { $classes, $effect, $item, $items, get, have } from "libram";
 import { itemFamiliarSpec } from "./familiar/item-familiar";
 
 export function baggoOutfit(includeFamiliar = true): Outfit {
@@ -44,7 +44,6 @@ export function baggoOutfit(includeFamiliar = true): Outfit {
     outfit.equip($item`protonic accelerator pack`);
   }
 
-  outfit.equip($items`June cleaver, Fourth of May Cosplay Saber`, $slot`weapon`);
   outfit.equip($item`carnivorous potted plant`);
   outfit.equip($item`mafia thumb ring`);
   outfit.setModes({ parka: "ghostasaurus" });

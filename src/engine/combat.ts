@@ -23,6 +23,7 @@ export class MyActionDefaults implements ActionDefaults<CombatActions> {
       .tryItem($item`Rain-Doh indigo cup`)
       .trySkill($skill`Summon Love Mosquito`)
       .tryItem($item`Time-Spinner`)
-      .tryItem($item`HOA citation pad`);
+      .tryItem($item`HOA citation pad`)
+      .tryItem($item`train whistle`);
   }
 }
