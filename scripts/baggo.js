@@ -6788,7 +6788,7 @@ var SimulatedState = /* @__PURE__ */ function() {
      * @returns The value, in meat, of adding a certain amount of familiar weight and item drop to the SimulatedState instance.
      */
   }, {
-    key: "valueOf",
+    key: "meatValueOf",
     value: function(famWeight, itemDrop) {
       return (new SimulatedState2(this.outfit, this.famWeight + famWeight, this.itemDrop + itemDrop).bagsGainedPerAdv() - this.bagsGainedPerAdv()) * args.bagvalue;
     }
@@ -6800,7 +6800,7 @@ var SimulatedState = /* @__PURE__ */ function() {
     value: function() {
       var _this = this;
       return function(famWeight, itemDrop) {
-        return _this.valueOf(famWeight, itemDrop);
+        return _this.meatValueOf(famWeight, itemDrop);
       };
     }
   }], [{
