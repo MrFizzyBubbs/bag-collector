@@ -7785,7 +7785,7 @@ var MARKET_QUESTS = [{
 }, {
   pref: "questM25Armorer",
   url: "shop.php?whichshop=armory&action=talk"
-}], FLORIST_FLOWERS = [Florist_exports.StealingMagnolia, Florist_exports.AloeGuvnor, Florist_exports.PitcherPlant];
+}], FLORIST_FLOWERS = [Florist_exports.StealingMagnolia, Florist_exports.AloeGuvnor, Florist_exports.PitcherPlant], checkedGnomePart = !1;
 function pull(item4) {
   return {
     name: "Pull ".concat(item4),
@@ -7885,13 +7885,16 @@ var SETUP_TASKS = [].concat(_toConsumableArray11(MARKET_QUESTS.map(function(_ref
 }, {
   name: "Kgnee",
   ready: function() {
-    return have($familiar(_templateObject1012 || (_templateObject1012 = _taggedTemplateLiteral23(["Reagnimated Gnome"]))));
+    return have($familiar(_templateObject1012 || (_templateObject1012 = _taggedTemplateLiteral23(["Reagnimated Gnome"])))) && !checkedGnomePart;
   },
   completed: function() {
     return have($item(_templateObject1111 || (_templateObject1111 = _taggedTemplateLiteral23(["gnomish housemaid's kgnee"]))));
   },
   do: function() {
     return ReagnimatedGnome_exports.choosePart("kgnee");
+  },
+  post: function() {
+    checkedGnomePart = !0;
   },
   outfit: {
     familiar: $familiar(_templateObject129 || (_templateObject129 = _taggedTemplateLiteral23(["Reagnimated Gnome"])))
