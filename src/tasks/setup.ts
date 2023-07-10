@@ -34,7 +34,6 @@ import {
   get,
   getModifier,
   have,
-  Macro,
   questStep,
   ReagnimatedGnome,
   SongBoom,
@@ -43,7 +42,6 @@ import {
 import { BaggoTask } from "../engine/task";
 import { itemFamiliarSpec } from "../familiar/item-familiar";
 import { canPull, gyou, ronin, turnsRemaining } from "../lib";
-import { BaggoCombatStrategy } from "../engine/combat";
 
 const MARKET_QUESTS = [
   { pref: "questM23Meatsmith", url: "shop.php?whichshop=meatsmith&action=talk" },
@@ -234,16 +232,6 @@ export const SETUP_TASKS: BaggoTask[] = [
         getModifier("Familiar Weight", $effect`Blessing of your favorite Bird`) > 0),
     completed: () => get("_favoriteBirdVisited"),
     do: () => useSkill($skill`Visit your Favorite Bird`),
-  },
-  {
-    name: "Pledge Allegiance",
-    completed: () => have($effect`Citizen of a Zone`),
-    ready: () => have($familiar`Patriotic Eagle`),
-    do: $location`Noob Cave`,
-    outfit: { familiar: $familiar`Patriotic Eagle` },
-    combat: new BaggoCombatStrategy().macro(
-      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`)
-    ),
   },
   ...buyPull($item`human musk`, 15000),
   ...buyPull($item`ice house`, 50000),

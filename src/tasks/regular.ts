@@ -13,6 +13,7 @@ import {
 } from "kolmafia";
 import {
   $effect,
+  $familiar,
   $item,
   $location,
   $monster,
@@ -125,5 +126,17 @@ export const REGULAR_TASKS: BaggoTask[] = [
     do: (): void => {
       AutumnAton.sendTo($location`The Neverending Party`);
     },
+  },
+  {
+    name: "Pledge Allegiance",
+    completed: () =>
+      have($effect`Citizen of a Zone`) && get("_citizenZoneMods").includes("Item Drop: +30"),
+    ready: () => have($familiar`Patriotic Eagle`),
+    prepare: () => uneffect($effect`Citizen of a Zone`),
+    do: $location`Noob Cave`,
+    outfit: { familiar: $familiar`Patriotic Eagle` },
+    combat: new BaggoCombatStrategy().macro(
+      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`)
+    ),
   },
 ];
