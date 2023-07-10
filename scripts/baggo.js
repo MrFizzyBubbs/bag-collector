@@ -6672,6 +6672,11 @@ var args = Args.create("baggo", "A script for farming duffel bags and van keys."
     default: 1 / 0,
     setting: ""
   }),
+  ascend: Args.boolean({
+    help: "Operate under the assumption that you're ascending today, rather than experiencing rollover.",
+    default: !1,
+    setting: ""
+  }),
   bagvalue: Args.number({
     help: "Value of a single duffel bag or van key.",
     default: 2e4
