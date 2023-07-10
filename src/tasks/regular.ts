@@ -39,6 +39,7 @@ import { baggoOutfit } from "../outfit";
 import { EFFECTS } from "../effects";
 import { Outfit, OutfitSpec } from "grimoire-kolmafia";
 import { juneCleaverChoices } from "../resources/cleaver";
+import { BaggoEngine } from "../engine/engine";
 
 export const REGULAR_TASKS: BaggoTask[] = [
   {
@@ -131,12 +132,14 @@ export const REGULAR_TASKS: BaggoTask[] = [
     name: "Pledge Allegiance",
     completed: () =>
       have($effect`Citizen of a Zone`) && get("_citizenZoneMods").includes("Item Drop: +30"),
-    ready: () => have($familiar`Patriotic Eagle`),
+    ready: () => have($familiar`Patriotic Eagle`) && !!BaggoEngine.runSource,
     prepare: () => uneffect($effect`Citizen of a Zone`),
     do: $location`Noob Cave`,
-    outfit: { familiar: $familiar`Patriotic Eagle` },
-    combat: new BaggoCombatStrategy().macro(
-      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`)
+    outfit: (): OutfitSpec => {
+      return { ...baggoOutfit(false).spec(), familiar: $familiar`Patriotic Eagle` };
+    },
+    combat: new BaggoCombatStrategy().macro(() =>
+      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`).step(BaggoEngine.runMacro())
     ),
   },
 ];
