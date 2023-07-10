@@ -132,14 +132,17 @@ export const REGULAR_TASKS: BaggoTask[] = [
     name: "Pledge Allegiance",
     completed: () =>
       have($effect`Citizen of a Zone`) && get("_citizenZoneMods").includes("Item Drop: +30"),
-    ready: () => isSober() && have($familiar`Patriotic Eagle`) && !!BaggoEngine.runSource,
+    ready: () => isSober() && have($familiar`Patriotic Eagle`),
     prepare: () => uneffect($effect`Citizen of a Zone`),
     do: $location`Noob Cave`,
     outfit: (): OutfitSpec => {
       return { ...baggoOutfit(false).spec(), familiar: $familiar`Patriotic Eagle` };
     },
     combat: new BaggoCombatStrategy().macro(() =>
-      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`).step(BaggoEngine.runMacro())
+      Macro.skill($skill`%fn, let's pledge allegiance to a Zone`)
+        .step(BaggoEngine.runMacro())
+        .attack()
+        .repeat()
     ),
   },
 ];
