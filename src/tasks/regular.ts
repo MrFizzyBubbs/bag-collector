@@ -132,7 +132,7 @@ export const REGULAR_TASKS: BaggoTask[] = [
     name: "Pledge Allegiance",
     completed: () =>
       have($effect`Citizen of a Zone`) && get("_citizenZoneMods").includes("Item Drop: +30"),
-    ready: () => have($familiar`Patriotic Eagle`) && !!BaggoEngine.runSource,
+    ready: () => isSober() && have($familiar`Patriotic Eagle`) && !!BaggoEngine.runSource,
     prepare: () => uneffect($effect`Citizen of a Zone`),
     do: $location`Noob Cave`,
     outfit: (): OutfitSpec => {
