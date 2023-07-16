@@ -1,7 +1,9 @@
 import { BaggoCombatStrategy, CombatActions } from "./combat";
-import { Quest, Task } from "grimoire-kolmafia";
+import { Limit, Quest, Task } from "grimoire-kolmafia";
 
-export type BaggoQuest = Quest<BaggoTask>;
+export type BaggoLimit = Limit & { completed?: boolean };
 export type BaggoTask = {
   combat?: BaggoCombatStrategy;
+  limit?: BaggoLimit;
 } & Task<CombatActions>;
+export type BaggoQuest = Quest<BaggoTask>;

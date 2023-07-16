@@ -96,6 +96,15 @@ export class BaggoEngine extends Engine<CombatActions, BaggoTask> {
     }
   }
 
+  checkLimits(task: BaggoTask, postcondition: (() => boolean) | undefined): void {
+    super.checkLimits(task, postcondition);
+
+    if (!task.limit) return;
+    const failureMessage = task.limit.message ? ` ${task.limit.message}` : "";
+    if (!task.completed() && task.limit.completed)
+      throw `Task ${task.name} is not completed, but it should be. Please check what went wrong.${failureMessage}`;
+  }
+
   initPropertiesManager(manager: PropertiesManager): void {
     manager.set({ hpAutoRecovery: 0.5, hpAutoRecoveryTarget: 1.0 });
     manager.setChoices(getHalloweinerChoices());
