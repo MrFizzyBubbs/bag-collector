@@ -8613,11 +8613,17 @@ var REGULAR_TASKS = [{
     }) : baggoOutfit();
   },
   combat: new BaggoCombatStrategy().kill(),
-  effects: EFFECTS
+  effects: EFFECTS,
+  limit: {
+    completed: !0
+  }
 }, {
   name: "June Cleaver",
   completed: function() {
-    return !JuneCleaver_exports.have() || !!get("_juneCleaverFightsLeft");
+    return get("_juneCleaverFightsLeft") > 0;
+  },
+  ready: function() {
+    return JuneCleaver_exports.have();
   },
   do: function() {
     return withProperty("recoveryScript", "", function() {
@@ -8632,7 +8638,10 @@ var REGULAR_TASKS = [{
   outfit: {
     weapon: $item(_templateObject720 || (_templateObject720 = _taggedTemplateLiteral28(["June cleaver"])))
   },
-  combat: new BaggoCombatStrategy().macro(Macro.abort())
+  combat: new BaggoCombatStrategy().macro(Macro.abort()),
+  limit: {
+    completed: !0
+  }
 }, {
   name: "Proton Ghost",
   ready: function() {
@@ -8651,7 +8660,10 @@ var REGULAR_TASKS = [{
       back: $item(_templateObject916 || (_templateObject916 = _taggedTemplateLiteral28(["protonic accelerator pack"])))
     });
   },
-  combat: new BaggoCombatStrategy().macro(Macro.trySkill($skill(_templateObject1012 || (_templateObject1012 = _taggedTemplateLiteral28(["Sing Along"])))).trySkill($skill(_templateObject1111 || (_templateObject1111 = _taggedTemplateLiteral28(["Summon Love Gnats"])))).trySkill($skill(_templateObject1210 || (_templateObject1210 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject1310 || (_templateObject1310 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject148 || (_templateObject148 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject158 || (_templateObject158 = _taggedTemplateLiteral28(["Trap Ghost"])))))
+  combat: new BaggoCombatStrategy().macro(Macro.trySkill($skill(_templateObject1012 || (_templateObject1012 = _taggedTemplateLiteral28(["Sing Along"])))).trySkill($skill(_templateObject1111 || (_templateObject1111 = _taggedTemplateLiteral28(["Summon Love Gnats"])))).trySkill($skill(_templateObject1210 || (_templateObject1210 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject1310 || (_templateObject1310 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject148 || (_templateObject148 = _taggedTemplateLiteral28(["Shoot Ghost"])))).trySkill($skill(_templateObject158 || (_templateObject158 = _taggedTemplateLiteral28(["Trap Ghost"]))))),
+  limit: {
+    completed: !0
+  }
 }, {
   name: "Kramco",
   ready: function() {
@@ -8668,7 +8680,10 @@ var REGULAR_TASKS = [{
       offhand: $item(_templateObject198 || (_templateObject198 = _taggedTemplateLiteral28(["Kramco Sausage-o-Matic\u2122"])))
     });
   },
-  combat: new BaggoCombatStrategy().kill()
+  combat: new BaggoCombatStrategy().kill(),
+  limit: {
+    completed: !0
+  }
 }, {
   name: "Cold Medicine Cabinet",
   ready: function() {
@@ -8690,6 +8705,9 @@ var REGULAR_TASKS = [{
   },
   do: function() {
     AutumnAton_exports.sendTo($location(_templateObject2211 || (_templateObject2211 = _taggedTemplateLiteral28(["The Neverending Party"]))));
+  },
+  limit: {
+    completed: !0
   }
 }];
 
