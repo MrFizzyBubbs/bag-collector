@@ -4,13 +4,17 @@ import { BaggoEngine } from "./engine/engine";
 import { gyou, isSober } from "./lib";
 import { Outfit } from "grimoire-kolmafia";
 import { myClass, outfitPieces, totalTurnsPlayed } from "kolmafia";
-import { $classes, $effect, $item, $items, $slot, get, have } from "libram";
+import { $classes, $effect, $familiar, $item, $items, $slot, get, have } from "libram";
 import { itemFamiliarSpec } from "./familiar/item-familiar";
 
 export function baggoOutfit(includeFamiliar = true): Outfit {
   const outfit = new Outfit();
 
-  if (includeFamiliar) outfit.equip(itemFamiliarSpec());
+  if (includeFamiliar) {
+    outfit.equip(itemFamiliarSpec());
+  } else {
+    outfit.equip($familiar`none`);
+  }
 
   if (!isSober() && !outfit.equip($item`Drunkula's wineglass`)) {
     throw "Unable to equip Drunkula's wineglass on baggo outfit";
